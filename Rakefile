@@ -1,4 +1,5 @@
 require './config'
+require 'fileutils'
 
 Dir[File.expand_path('../lib/**.rb', __FILE__)].each {|t| load t}
 Dir[File.expand_path('../tasks/**/*.rake', __FILE__)].each {|t| load t}

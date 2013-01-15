@@ -29,8 +29,17 @@ task :update_metadata do |t, args|
   end
 end
 
+desc 'Pull the latest S3 Repo contents locally'
+task :pull do |t, args|
+  FileUtils.mkdir_p 's3-repo'
+  cmd = "s3cmd sync --recursive"
+  cmd << " --no-check-md5" # speed things up a bit
+  cmd << " s3://#{S3_BUCKET}/ s3-repo/"
+  sh cmd
+end
+
 desc 'Push new packages and metadata to S3'
-task :sync, [:delete] => :update_metadata do |t, args|
+task :push, [:delete] => :update_metadata do |t, args|
   cmd = "s3cmd sync --recursive"
   #cmd << " --multipart-chunk-size-mb=100" # bigger chunk size for less hassle
   cmd << " --acl-public"   # downloads don't require auth
