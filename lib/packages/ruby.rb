@@ -20,6 +20,10 @@ class Ruby < Package
   end
 
   def provides
-    ['rake', 'libruby', 'irb', 'ruby-interpreter', 'rdoc', 'ruby-dev']
+    ['ruby', 'ruby-dev', 'libruby', 'rake', 'irb', 'ruby-interpreter', 'rdoc']
+  end
+
+  def replaces
+    ['ruby', 'ruby1.8', 'libruby1.8']
   end
 end
