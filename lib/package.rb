@@ -49,7 +49,7 @@ class Package
     if output.length > 1
       raise "Error: tarfile #{self.tarfile} has #{output.length} top-level entries"
     end
-    return "#{working_dir}/#{output[0]}"
+    return "#{working_dir}/#{output[0]}".strip
   end
 
   def tarfile
@@ -129,7 +129,7 @@ class Package
       Recommends: 
       Replaces: #{Array(self.replaces).join(', ')}
       Provides: #{Array(self.provides).join(', ')}
-      Description: #{self.description}
+      Description: #{self.description.gsub(/\n/m, '\n       ')}
     CONTROL_FILE
   end
 
