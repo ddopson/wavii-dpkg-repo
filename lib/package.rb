@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
 class Package
+  def initialize
+    #@dry_run = true
+  end
+
   def name
     raise 'This must be defined'
   end
@@ -12,13 +16,52 @@ class Package
   def url
     raise 'This must be defined'
   end
-  
-  def tarfile
-    "#{name}-#{version}.tar.gz"
+
+  def description
+    raise 'This must be defined'
   end
 
-  def arch
-    'i386'
+  def depends
+    []
+  end
+
+  def provides
+    [self.name]
+  end
+
+  def replaces
+    []
+  end
+  
+  def working_dir
+    @working_dir ||= Dir.mktmpdir ['', "-#{name}-#{version}"], "#{BASE_DIRECTORY}/tmp"
+  end
+
+  def source_dir
+    @source_dir ||= detect_source_dir
+  end
+
+  def detect_source_dir
+    if @dry_run
+      return '#{source_dir}'
+    end
+    output = `tar -tzf #{self.tarfile} | cut -d/ -f1 | uniq`.split('\n')
+    if output.length > 1
+      raise "Error: tarfile #{self.tarfile} has #{output.length} top-level entries"
+    end
+    return "#{working_dir}/#{output[0]}"
+  end
+
+  def tarfile
+    "#{working_dir}/#{name}-#{version}.tar.gz"
+  end
+  
+  def debfile
+    "#{self.working_dir}/#{name}-#{version}-#{ARCH}.deb"
+  end
+
+  def install_root
+    "#{working_dir}/install-root"
   end
 
   def do_all
@@ -26,38 +69,78 @@ class Package
     self.do_unpack
     self.do_build
     self.do_package
+    self.do_copy
+  end
+
+  def announce(msg)
+    puts "\033[32;m#{msg}\033[39;m"
+  end
+
+  def cmd(cmd, dir = self.working_dir)
+    cmd="cd #{dir}\n#{cmd}"
+    puts "\033[33;m#{cmd}\033[39;m"
+    unless @dry_run
+      sh cmd
+    end
   end
 
   def do_fetch
-    puts "Downloading #{name}-#{version} from '#{self.url}'"
-    `curl -s '#{self.url}' > #{self.tarfile}`
+    self.announce "Downloading #{name}-#{version} from '#{self.url}'"
+    self.cmd "pwd"
+    self.cmd "curl -s -D- -o '#{self.tarfile}'  '#{self.url}'"
   end
 
   def do_unpack
-    `tar -xzf #{self.tarfile}`
-    # TODO: check that everything unpacks to a single dir and then pass that dir to build
-  end
-
-  def do_build_configure
-    `./configure --prefix=/usr`
+    self.announce "Unpacking tarball '#{self.tarfile}'"
+    self.cmd "tar -xzf '#{self.tarfile}'"
   end
 
   def do_build
     self.do_build_configure
     self.do_build_build
+    self.do_build_install
+  end
+
+  def do_build_configure
+    self.announce "Configuring Build for #{name}-#{version}"
+    self.cmd "./configure --prefix=/usr", self.source_dir
   end
 
   def do_build_build
-    `make`
+    self.announce "Building #{name}-#{version}"
+    self.cmd "make -j8", self.source_dir
   end
 
   def do_build_install
-    `make install DESTDIR="#{self.install_root}"`
+    self.announce "Installing #{name}-#{version} into #{self.install_root}"
+    self.cmd "make install DESTDIR='#{self.install_root}'", self.source_dir
+  end
+
+  def do_write_controlfile
+    Dir.mkdir "#{self.install_root}/DEBIAN"
+    File.write "#{self.install_root}/DEBIAN/control", <<-"CONTROL_FILE".strip_heredoc
+      Package: #{self.name}
+      Version: #{self.version}
+      Section: web
+      Architecture: #{ARCH}
+      Maintainer: Dave Dopson <dave@wavii.com>
+      Depends: #{Array(self.depends).join(', ')}
+      Pre-Depends: 
+      Recommends: 
+      Replaces: #{Array(self.replaces).join(', ')}
+      Provides: #{Array(self.provides).join(', ')}
+      Description: #{self.description}
+    CONTROL_FILE
   end
 
   def do_package
-    `dpkg -b "#{self.install_root}" "#{name}-#{version}-#{arch}.deb"`
+    self.do_write_controlfile
+    self.announce "DPackaging #{name}-#{version} from directory #{self.install_root}"
+    self.cmd "dpkg -b '#{self.install_root}' '#{self.debfile}'"
   end
 
+  def do_copy
+    self.cmd "mv '#{self.debfile}' '#{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{ARCH}/'"
+  end
 end
 

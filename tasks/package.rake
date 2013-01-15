@@ -6,15 +6,14 @@ end
 
 task :default => :help
 
-desc 'Some text'
-task :foo, [:package_name] do |t, args|
+desc 'Download, Build, and Package one project'
+task :build, [:package_name] do |t, args|
   package_name = args[:package_name]
   require "packages/#{package_name}"
   clazz = Kernel.const_get package_name.capitalize
   pkg = clazz.new
 
-  puts "Hello #{pkg.name} and #{pkg.version}"
-
+  pkg.do_all
 end
 
 task :update_metadata do |t, args|
@@ -33,7 +32,7 @@ end
 desc 'Push new packages and metadata to S3'
 task :sync, [:delete] => :update_metadata do |t, args|
   cmd = "s3cmd sync --recursive"
-  cmd << " --multipart-chunk-size-mb=100" # bigger chunk size for less hassle
+  #cmd << " --multipart-chunk-size-mb=100" # bigger chunk size for less hassle
   cmd << " --acl-public"   # downloads don't require auth
   cmd << " --no-check-md5" # speed things up a bit
   #cmd << " --skip-existing" # aggressively skip files
