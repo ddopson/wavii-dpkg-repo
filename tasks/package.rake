@@ -11,17 +11,22 @@ task :foo, [:package_name] do |t, args|
   package_name = args[:package_name]
   require "packages/#{package_name}"
   clazz = Kernel.const_get package_name.capitalize
-  inst = clazz.new
+  pkg = clazz.new
 
-  puts "Hello #{package_name} and #{inst.version}"
+  puts "Hello #{pkg.name} and #{pkg.version}"
 
 end
 
 task :update_metadata do |t, args|
   chdir 's3-repo' do
-    arch="i386"
-    pth="dists/wavii/main"
-    sh "(dpkg-scanpackages #{pth}/binary-all/; dpkg-scanpackages #{pth}/binary-#{arch}/) | bzip2 > #{pth}/binary-i386/Packages.bz2"
+    cmd = '('
+    cmd << "dpkg-scanpackages dists/#{DIST_PATH}/binary-all/; "
+    cmd << "dpkg-scanpackages dists/#{DIST_PATH}/binary-#{ARCH}"
+    cmd << ')'
+    cmd << " | bzip2 > dists/#{DIST_PATH}/binary-#{ARCH}/Packages.bz2"
+    sh cmd
+
+    File.write(LISTFILE, "deb http://#{S3_BUCKET}.s3.amazonaws.com #{DIST_PATH.gsub('/', ' ')}")
   end
 end
 
@@ -32,7 +37,7 @@ task :sync, [:delete] => :update_metadata do |t, args|
   cmd << " --acl-public"   # downloads don't require auth
   cmd << " --no-check-md5" # speed things up a bit
   #cmd << " --skip-existing" # aggressively skip files
-  cmd << " s3-repo/ s3://wavii-repo/"
+  cmd << " s3-repo/ s3://#{S3_BUCKET}/"
   sh cmd
 end
 
