@@ -8,11 +8,11 @@ class Package
   def name
     raise 'This must be defined'
   end
-  
+
   def version
     raise 'This must be defined'
   end
-  
+
   def url
     raise 'This must be defined'
   end
@@ -30,13 +30,17 @@ class Package
   end
 
   def provides
-    [self.name]
+    [self.name, "#{PACKAGING_PREFIX}#{self.name}"]
   end
 
   def replaces
-    []
+    [self.name]
   end
-  
+
+  def install_prefix
+    '/usr/local'
+  end
+
   def working_dir
     @working_dir ||= Dir.mktmpdir ['', "-#{name}-#{version}"], "#{BASE_DIRECTORY}/tmp"
   end
@@ -59,9 +63,9 @@ class Package
   def tarfile
     "#{working_dir}/#{name}-#{version}.tar.gz"
   end
-  
+
   def debfile
-    "#{self.working_dir}/#{name}-#{version}-#{arch}.deb"
+    "#{self.working_dir}/#{PACKAGING_PREFIX}#{name}-#{version}-#{arch}.deb"
   end
 
   def install_root
@@ -107,7 +111,7 @@ class Package
 
   def do_build_configure
     self.announce "Configuring Build for #{name}-#{version}"
-    self.cmd "./configure --prefix=/usr", self.source_dir
+    self.cmd "./configure --prefix=#{self.install_prefix}", self.source_dir
   end
 
   def do_build_build
@@ -122,14 +126,14 @@ class Package
 
   def do_write_controlfile
     contents = <<-"CONTROL_FILE".strip_heredoc
-      Package: #{self.name}
+      Package: #{PACKAGING_PREFIX}#{self.name}
       Version: #{self.version}
       Section: web
       Architecture: #{arch}
       Maintainer: Dave Dopson <dave@wavii.com>
       Depends: #{Array(self.depends).join(', ')}
-      Pre-Depends: 
-      Recommends: 
+      Pre-Depends:
+      Recommends:
       Replaces: #{Array(self.replaces).join(', ')}
       Provides: #{Array(self.provides).join(', ')}
     CONTROL_FILE
