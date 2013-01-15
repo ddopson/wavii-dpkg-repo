@@ -45,8 +45,11 @@ task :push, [:delete] => :update_metadata do |t, args|
   cmd << " --acl-public"   # downloads don't require auth
   cmd << " --no-check-md5" # speed things up a bit
   #cmd << " --skip-existing" # aggressively skip files
+
+  if args[:delete] == 'hard'
+    cmd << " --delete-removed"
+  end
   cmd << " s3-repo/ s3://#{S3_BUCKET}/"
   sh cmd
 end
-
 
