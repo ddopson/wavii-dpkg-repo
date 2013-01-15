@@ -7,6 +7,10 @@ class S3cmd < Package
     'http://s3tools.org/s3cmd'
   end
 
+  def arch
+    'all'
+  end
+
   def do_build
     # Basically, the strategy to package it is to allow it to write to /usr/local and the package up whatever gets written there
     # Thus, this package require exclusive superuser access to the entire box

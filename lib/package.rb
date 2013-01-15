@@ -21,6 +21,10 @@ class Package
     raise 'This must be defined'
   end
 
+  def arch
+    ARCH
+  end
+
   def depends
     []
   end
@@ -57,7 +61,7 @@ class Package
   end
   
   def debfile
-    "#{self.working_dir}/#{name}-#{version}-#{ARCH}.deb"
+    "#{self.working_dir}/#{name}-#{version}-#{arch}.deb"
   end
 
   def install_root
@@ -117,20 +121,23 @@ class Package
   end
 
   def do_write_controlfile
-    Dir.mkdir "#{self.install_root}/DEBIAN"
-    File.write "#{self.install_root}/DEBIAN/control", <<-"CONTROL_FILE".strip_heredoc
+    contents = <<-"CONTROL_FILE".strip_heredoc
       Package: #{self.name}
       Version: #{self.version}
       Section: web
-      Architecture: #{ARCH}
+      Architecture: #{arch}
       Maintainer: Dave Dopson <dave@wavii.com>
       Depends: #{Array(self.depends).join(', ')}
       Pre-Depends: 
       Recommends: 
       Replaces: #{Array(self.replaces).join(', ')}
       Provides: #{Array(self.provides).join(', ')}
-      Description: #{self.description.gsub(/\n/m, '\n       ')}
     CONTROL_FILE
+    contents << "Description: #{self.description.gsub(/\n/, "\n  ")}\n"
+    self.announce "Writing Control File:"
+    puts contents.gsub(/^/, '>>')
+    Dir.mkdir "#{self.install_root}/DEBIAN"
+    File.write "#{self.install_root}/DEBIAN/control", contents
   end
 
   def do_package
@@ -140,7 +147,8 @@ class Package
   end
 
   def do_copy
-    self.cmd "mv '#{self.debfile}' '#{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{ARCH}/'"
+    self.cmd "mv '#{self.debfile}' '#{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{arch}/'"
+    self.announce "SUCCESS! Final Output: #{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{arch}/#{File.basename(self.debfile)}"
   end
 end
 
