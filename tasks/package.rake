@@ -1,4 +1,11 @@
 
+def load_package(package_name)
+  require "#{File.dirname(__FILE__)}/../packages/#{package_name}"
+  clazz = Kernel.const_get package_name.camelize
+  pkg = clazz.new
+end
+
+
 desc 'Print Help Menu'
 task :help do
   puts `rake -T`
@@ -9,10 +16,7 @@ task :default => :help
 desc 'Download, Build, and Package one project'
 task :build, [:package_name] do |t, args|
   package_name = args[:package_name]
-  require "#{File.dirname(__FILE__)}/../packages/#{package_name}"
-  clazz = Kernel.const_get package_name.camelize
-  pkg = clazz.new
-
+  pkg = load_package(package_name)
   pkg.do_all
 end
 
@@ -53,3 +57,8 @@ task :push, [:delete] => :update_metadata do |t, args|
   sh cmd
 end
 
+task :irb do
+  require 'irb'
+  ARGV.clear
+  IRB.start
+end
