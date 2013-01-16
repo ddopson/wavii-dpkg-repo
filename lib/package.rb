@@ -51,7 +51,7 @@ class Package
   end
 
   def working_dir
-    @working_dir ||= Dir.mktmpdir ['', "-#{name}-#{wdversion}"], "#{BASE_DIRECTORY}/tmp"
+    "#{BASE_DIRECTORY}/tmp/#{self.name}-#{self.version}"
   end
 
   def source_dir
@@ -98,11 +98,20 @@ class Package
   end
 
   def do_all
+    self.do_clean
     self.do_deps
     self.do_fetch
     self.do_build
     self.do_package
     self.do_copy
+  end
+
+  def do_clean
+    if File.exists?(self.working_dir)
+      self.announce "Cleaning out old contents from #{self.working_dir}"
+      FileUtils.rm_rf(self.working_dir)
+    end
+    FileUtils.mkdir_p(self.working_dir)
   end
 
   def do_deps
