@@ -10,7 +10,7 @@ Package.define 's3cmd' do
    DESC
 
   version '1.1.0-beta3-nohang'
-  url 'wavii-repo.s3.amazonaws.com/source/s3cmd-1.1.0-beta3-nohang.tar.gz'
+  url lambda { "wavii-repo.s3.amazonaws.com/source/#{name}-#{version}.tar.gz" }
   depends "python (>= 2.5) | python-elementtree, python, python-support (>= 0.7.1)"
 
   def do_build
