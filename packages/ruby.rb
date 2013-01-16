@@ -19,6 +19,25 @@ class Ruby < Package
     'openssl'
   end
 
+  def build_depends
+    %w{
+      libc6-dev
+      libssl-dev
+      libmysql++-dev
+      libsqlite3-dev
+      libssl-dev 
+      libreadline6-dev
+      libyaml-dev
+      zlib1g-dev
+    }
+  end
+
+  def do_build
+    self.announce "Ensuring that all the build dependencies are installed"
+    self.cmd "sudo apt-get -y install #{self.build_depends.join(' ')}"
+    super
+  end
+
   def provides
     ['ruby', 'ruby-dev', 'libruby', 'rake', 'irb', 'ruby-interpreter', 'rdoc']
   end
