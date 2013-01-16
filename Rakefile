@@ -1,9 +1,13 @@
 require './config'
 require 'fileutils'
 
-Dir[File.expand_path('../lib/**.rb', __FILE__)].each {|t| load t}
 Dir[File.expand_path('../tasks/**/*.rake', __FILE__)].each {|t| load t}
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+
+require 'package'
+require 'gem-package'
+require 'backcompat'
+require 'virtual-package'
 
 ARCH = case `uname -m`.strip
   when 'i686' then 'i386'

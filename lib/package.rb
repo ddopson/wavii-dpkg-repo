@@ -41,8 +41,12 @@ class Package
     '/usr/local'
   end
 
+  def wdversion
+    version # this is a hack so for packages w/o a specified version
+  end
+
   def working_dir
-    @working_dir ||= Dir.mktmpdir ['', "-#{name}-#{version}"], "#{BASE_DIRECTORY}/tmp"
+    @working_dir ||= Dir.mktmpdir ['', "-#{name}-#{wdversion}"], "#{BASE_DIRECTORY}/tmp"
   end
 
   def source_dir
@@ -73,8 +77,9 @@ class Package
   end
 
   def do_all
+    self.announce "Starting Fetch Process for #{name}"
     self.do_fetch
-    self.do_unpack
+    self.announce "Starting Build Process for #{name}"
     self.do_build
     self.do_package
     self.do_copy
@@ -96,6 +101,7 @@ class Package
     self.announce "Downloading #{name}-#{version} from '#{self.url}'"
     self.cmd "pwd"
     self.cmd "curl -s -D- -o '#{self.tarfile}'  '#{self.url}'"
+    self.do_unpack
   end
 
   def do_unpack
