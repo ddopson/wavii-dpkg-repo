@@ -19,7 +19,7 @@ end
 task :update_metadata do |t, args|
   chdir 's3-repo' do
     cmd = '('
-    cmd << "dpkg-scanpackages dists/#{DIST_PATH}/binary-all/; "
+    cmd << "dpkg-scanpackages dists/#{DIST_PATH}/binary-all; "
     cmd << "dpkg-scanpackages dists/#{DIST_PATH}/binary-#{ARCH}"
     cmd << ')'
     cmd << " | bzip2 > dists/#{DIST_PATH}/binary-#{ARCH}/Packages.bz2"
