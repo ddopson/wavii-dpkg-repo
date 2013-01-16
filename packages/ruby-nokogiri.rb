@@ -1,23 +1,13 @@
-class Rubynokogiri < GemPackage
-  def gem_name
-    'nokogiri'
-  end
+GemPackage.define 'ruby-nokogiri' do
+  version_spec '1.5.4'
 
-  def gem_version
-    '1.5.4'
-  end
+  build_depends %w{
+    libxml2-dev
+    libxslt-dev
+  }
 
-  def build_depends
-    %w{
-      libxml2-dev
-      libxslt-dev
-    }
-  end
-
-  def depends
-    %w{
-      libxml2
-      libxslt
-    }
-  end
+  depends %w{
+    libxml2
+    libxslt1.1
+  }
 end

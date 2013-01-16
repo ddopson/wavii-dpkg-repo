@@ -1,49 +1,50 @@
 #!/usr/bin/env ruby
 
 class Package
-  def initialize
-    #@dry_run = true
+  include Rake::DSL
+
+  def self.define (pkg_name, &block)
+    c = Class.new(self, &block)
+    puts "Defining name on class"
+    c.send :define_method, :name, lambda { pkg_name }
+    Kernel.const_set pkg_name.to_s.camelize, c
   end
 
-  def name
-    raise 'This must be defined'
+  def self.declare_properties(hash)
+    hash.each do |sym, default|
+      if default.is_a? Proc
+        self.send :define_method, sym, default
+      else
+        self.send :define_method, sym do
+          if default == :required
+            raise "'#{sym.to_s}' must be defined"
+          end
+          default
+        end
+      end
+
+      self.define_singleton_method(sym) do |str|
+        if str.is_a? Proc
+          self.send :define_method, sym, str
+        else
+          self.send :define_method, sym, lambda { str }
+        end
+      end
+    end
   end
 
-  def version
-    raise 'This must be defined'
-  end
-
-  def url
-    raise 'This must be defined'
-  end
-
-  def description
-    raise 'This must be defined'
-  end
-
-  def arch
-    ARCH
-  end
-
-  def build_depends
-    nil
-  end
-
-  def depends
-    []
-  end
-
-  def provides
-    [self.name, "#{PACKAGING_PREFIX}#{self.name}"]
-  end
-
-  def replaces
-    [self.name]
-  end
-
-  def install_prefix
-    '/usr/local'
-  end
+  self.declare_properties(
+    :description => :required,
+    :version => :required,
+    :url => :required,
+    :homepage => nil,
+    :depends => [],
+    :build_depends => [],
+    :arch => ARCH,
+    :install_prefix => '/usr/local',
+    :provides => lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] },
+    :replaces => lambda { [self.name] },
+  )
 
   def wdversion
     version # this is a hack so for packages w/o a specified version
@@ -80,6 +81,10 @@ class Package
     "#{working_dir}/install-root"
   end
 
+  ####################################################################################################
+  # Machinery - does work
+  ####################################################################################################
+
   def announce(msg)
     puts "\033[32;m#{msg}\033[39;m"
   end
@@ -101,9 +106,10 @@ class Package
   end
 
   def do_deps
-    if self.build_depends
-      self.announce "Ensuring that all the build dependencies are installed - {#{self.build_depends.join(', ')}}"
-      self.cmd "sudo apt-get -y install #{self.build_depends.join(' ')}"
+    deps = Array(self.build_depends)
+    if deps.length > 0
+      self.announce "Ensuring that all the build dependencies are installed - {#{deps.join(', ')}}"
+      self.cmd "sudo apt-get -y install #{deps.join(' ')}"
     end
   end
 

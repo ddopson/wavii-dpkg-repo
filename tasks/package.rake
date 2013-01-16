@@ -10,7 +10,7 @@ desc 'Download, Build, and Package one project'
 task :build, [:package_name] do |t, args|
   package_name = args[:package_name]
   require "#{File.dirname(__FILE__)}/../packages/#{package_name}"
-  clazz = Kernel.const_get package_name.capitalize.gsub('-', '')
+  clazz = Kernel.const_get package_name.camelize
   pkg = clazz.new
 
   pkg.do_all

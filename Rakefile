@@ -1,13 +1,6 @@
 require './config'
 require 'fileutils'
 
-Dir[File.expand_path('../tasks/**/*.rake', __FILE__)].each {|t| load t}
-$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
-
-require 'package'
-require 'gem-package'
-require 'backcompat'
-require 'virtual-package'
 
 ARCH = case `uname -m`.strip
   when 'i686' then 'i386'
@@ -17,10 +10,16 @@ end
 
 BASE_DIRECTORY = File.expand_path(File.dirname(__FILE__))
 
-unless File.exists? "#{BASE_DIRECTORY}/tmp"
-  Dir.mkdir "#{BASE_DIRECTORY}/tmp", 0700
-end
+Dir[File.expand_path('../tasks/**/*.rake', __FILE__)].each {|t| load t}
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+
+require 'backcompat'
+require 'package'
+require 'makefile-package'
+require 'gem-package'
+require 'virtual-package'
 
 puts "ARCH=#{ARCH}"
 puts "BASE_DIRECTORY=#{BASE_DIRECTORY}"
+
 

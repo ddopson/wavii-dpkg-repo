@@ -1,9 +1,3 @@
-class Rubychef < GemPackage
-  def gem_name
-    'chef'
-  end
-
-  def gem_version
-    '0.10.4'
-  end
+GemPackage.define 'ruby-chef' do
+  version_spec '0.10.4'
 end

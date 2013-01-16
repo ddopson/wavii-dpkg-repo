@@ -19,3 +19,12 @@ unless String.new.respond_to? :strip_heredoc
     end
   end
 end
+
+unless String.new.respond_to? :camelize
+  class String
+    def camelize
+      self.gsub(/^.|-./){|m| m.gsub('-', '').capitalize }
+    end
+  end
+end
+

@@ -1,9 +1,3 @@
-class Rubyinifile < GemPackage
-  def gem_name
-    'inifile'
-  end
-
-  def gem_version
-    '0.4.1'
-  end
+GemPackage.define 'ruby-inifile' do
+  version_spec '0.4.1'
 end

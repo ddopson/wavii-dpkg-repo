@@ -1,21 +1,17 @@
 
 class GemPackage < Package
+  self.declare_properties(
+    :version_spec => nil,
+  )
+
   def gem_name
-    raise 'Must be provided'
-  end
-
-  def gem_version
-    nil
-  end
-
-  def name
-    "ruby-#{gem_name}"
+    name.gsub(/^ruby-/, '')
   end
 
   def version
     unless @version
-      if gem_version
-        return @version = gem_version
+      if version_spec
+        return @version = version_spec
       end
       result = `env GEM_PATH=#{gem_install_root} gem which #{gem_name}`
       # eg /home/ubuntu/wavii-dpkg-repo/install-root/usr/local/lib/ruby/gems/1.9.1/gems/bundler-1.0.21/lib/bundler.rb
@@ -32,7 +28,7 @@ class GemPackage < Package
   end
 
   def wdversion
-    gem_version || 'unknown'
+    version_spec || 'unknown'
   end
 
   def gem_install_root
@@ -49,8 +45,8 @@ class GemPackage < Package
     cmd << %Q{ --install-dir "#{self.gem_install_root}"}
     cmd << %Q{ --bindir "#{self.install_root}#{self.install_prefix}/bin"}
     cmd << %Q{ #{self.gem_name}}
-    if self.gem_version
-      cmd << %Q{ --version "#{self.gem_version}"}
+    if self.version_spec
+      cmd << %Q{ --version "#{self.version_spec}"}
     end
     self.cmd cmd
   end

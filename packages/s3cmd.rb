@@ -1,15 +1,17 @@
-class S3cmd < Package
-  def name
-    's3cmd'
-  end
+Package.define 's3cmd' do
+  arch 'all'
+  homepage 'http://s3tools.org/s3cmd'
 
-  def homepage
-    'http://s3tools.org/s3cmd'
-  end
+  description <<-"DESC".strip_heredoc
+     The ultimate Amazon S3 and CloudFront command line client
+     Command-line tool for uploading, retrieving and managing data in Amazon S3
+     storage service. Also supports publishing to Amazon CloudFront. Designed for
+     power users, easy to use in scripts.
+   DESC
 
-  def arch
-    'all'
-  end
+  version '1.1.0-beta3-nohang'
+  url 'wavii-repo.s3.amazonaws.com/source/s3cmd-1.1.0-beta3-nohang.tar.gz'
+  depends "python (>= 2.5) | python-elementtree, python, python-support (>= 0.7.1)"
 
   def do_build
     # Basically, the strategy to package it is to allow it to write to /usr/local and the package up whatever gets written there
@@ -33,27 +35,4 @@ class S3cmd < Package
       self.cmd "sudo mv /usr/local.bak /usr/local"
     end
   end
-
-
-  def description
-    <<-"DESC".strip_heredoc
-       The ultimate Amazon S3 and CloudFront command line client
-       Command-line tool for uploading, retrieving and managing data in Amazon S3
-       storage service. Also supports publishing to Amazon CloudFront. Designed for
-       power users, easy to use in scripts.
-     DESC
-  end
-
-  def version
-    '1.1.0-beta3-nohang'
-  end
-
-  def url
-    'wavii-repo.s3.amazonaws.com/source/s3cmd-1.1.0-beta3-nohang.tar.gz'
-  end
-
-  def depends
-    "python (>= 2.5) | python-elementtree, python, python-support (>= 0.7.1)"
-  end
-
 end
