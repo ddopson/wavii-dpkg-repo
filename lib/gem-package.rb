@@ -11,7 +11,7 @@ class GemPackage < Package
   def name
     "ruby-#{gem_name}"
   end
-  
+
   def version
     unless @version
       if gem_version

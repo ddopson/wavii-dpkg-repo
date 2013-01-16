@@ -1,10 +1,10 @@
-class Ruby < Package
+class Ruby < MakefilePackage
   def name
     'ruby'
   end
 
   def description
-    "Ruby. A dynamic, open source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write." 
+    "Ruby. A dynamic, open source programming language with a focus on simplicity and productivity. It has an elegant syntax that is natural to read and easy to write."
   end
 
   def version
@@ -25,17 +25,11 @@ class Ruby < Package
       libssl-dev
       libmysql++-dev
       libsqlite3-dev
-      libssl-dev 
+      libssl-dev
       libreadline6-dev
       libyaml-dev
       zlib1g-dev
     }
-  end
-
-  def do_build
-    self.announce "Ensuring that all the build dependencies are installed"
-    self.cmd "sudo apt-get -y install #{self.build_depends.join(' ')}"
-    super
   end
 
   def provides

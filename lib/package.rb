@@ -25,6 +25,10 @@ class Package
     ARCH
   end
 
+  def build_depends
+    nil
+  end
+
   def depends
     []
   end
@@ -76,15 +80,6 @@ class Package
     "#{working_dir}/install-root"
   end
 
-  def do_all
-    self.announce "Starting Fetch Process for #{name}"
-    self.do_fetch
-    self.announce "Starting Build Process for #{name}"
-    self.do_build
-    self.do_package
-    self.do_copy
-  end
-
   def announce(msg)
     puts "\033[32;m#{msg}\033[39;m"
   end
@@ -94,6 +89,21 @@ class Package
     puts "\033[33;m#{cmd}\033[39;m"
     unless @dry_run
       sh cmd
+    end
+  end
+
+  def do_all
+    self.do_deps
+    self.do_fetch
+    self.do_build
+    self.do_package
+    self.do_copy
+  end
+
+  def do_deps
+    if self.build_depends
+      self.announce "Ensuring that all the build dependencies are installed - {#{self.build_depends.join(', ')}}"
+      self.cmd "sudo apt-get -y install #{self.build_depends.join(' ')}"
     end
   end
 
@@ -107,27 +117,6 @@ class Package
   def do_unpack
     self.announce "Unpacking tarball '#{self.tarfile}'"
     self.cmd "tar -xzf '#{self.tarfile}'"
-  end
-
-  def do_build
-    self.do_build_configure
-    self.do_build_build
-    self.do_build_install
-  end
-
-  def do_build_configure
-    self.announce "Configuring Build for #{name}-#{version}"
-    self.cmd "./configure --prefix=#{self.install_prefix}", self.source_dir
-  end
-
-  def do_build_build
-    self.announce "Building #{name}-#{version}"
-    self.cmd "make -j8", self.source_dir
-  end
-
-  def do_build_install
-    self.announce "Installing #{name}-#{version} into #{self.install_root}"
-    self.cmd "make install DESTDIR='#{self.install_root}'", self.source_dir
   end
 
   def do_write_controlfile
@@ -148,6 +137,10 @@ class Package
     puts contents.gsub(/^/, '>>')
     Dir.mkdir "#{self.install_root}/DEBIAN"
     File.write "#{self.install_root}/DEBIAN/control", contents
+  end
+
+  def do_build
+    raise 'must be defined'
   end
 
   def do_package

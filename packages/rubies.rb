@@ -1,5 +1,5 @@
 class Rubies < VirtualPackage
-  def name 
+  def name
     'rubies'
   end
 

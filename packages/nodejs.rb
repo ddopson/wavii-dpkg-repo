@@ -1,4 +1,4 @@
-class Nodejs < Package
+class Nodejs < MakefilePackage
   def name
     'nodejs'
   end
