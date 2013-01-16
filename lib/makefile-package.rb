@@ -1,4 +1,9 @@
 class MakefilePackage < Package
+  self.declare_properties(
+    :configure_options => '',
+    :build_options => '-j8',
+  )
+
   def do_build
     self.do_build_configure
     self.do_build_build
@@ -7,12 +12,12 @@ class MakefilePackage < Package
 
   def do_build_configure
     self.announce "Configuring Build for #{name}-#{version}"
-    self.cmd "./configure --prefix=#{self.install_prefix}", self.source_dir
+    self.cmd "./configure --prefix=#{self.install_prefix} #{self.configure_options}", self.source_dir
   end
 
   def do_build_build
     self.announce "Building #{name}-#{version}"
-    self.cmd "make -j8", self.source_dir
+    self.cmd "make #{self.build_options}", self.source_dir
   end
 
   def do_build_install
