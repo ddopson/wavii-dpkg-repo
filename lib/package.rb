@@ -23,6 +23,10 @@ class Package < PropertyBag
   property :provides, lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] }
   property :replaces, lambda { [self.name] }
 
+  def pkgname
+    name
+  end
+
   def wdversion
     version # this is a hack so for packages w/o a specified version
   end
@@ -75,12 +79,14 @@ class Package < PropertyBag
   end
 
   def do_all
-    self.do_clean
-    self.do_deps
-    self.do_fetch
-    self.do_build
-    self.do_package
-    self.do_copy
+    unless File.exists?("#{self.working_dir}/SUCCESS")
+      self.do_clean
+      self.do_deps
+      self.do_fetch
+      self.do_build
+      self.do_package
+      self.do_copy
+    end
   end
 
   def do_clean
@@ -113,7 +119,7 @@ class Package < PropertyBag
 
   def do_write_controlfile
     contents = <<-"CONTROL_FILE".strip_heredoc
-      Package: #{PACKAGING_PREFIX}#{self.name}
+      Package: #{PACKAGING_PREFIX}#{self.pkgname}
       Version: #{self.version}
       Section: web
       Architecture: #{arch}
@@ -127,7 +133,7 @@ class Package < PropertyBag
     contents << "Description: #{self.description.gsub(/\n/, "\n  ")}\n"
     self.announce "Writing Control File:"
     puts contents.gsub(/^/, '>>')
-    Dir.mkdir "#{self.install_root}/DEBIAN"
+    FileUtils.mkdir_p "#{self.install_root}/DEBIAN"
     File.write "#{self.install_root}/DEBIAN/control", contents
   end
 
@@ -143,6 +149,7 @@ class Package < PropertyBag
 
   def do_copy
     self.cmd "mv '#{self.debfile}' '#{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{arch}/'"
+    self.cmd "touch #{self.working_dir}/SUCCESS"
     self.announce "SUCCESS! Final Output: #{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{arch}/#{File.basename(self.debfile)}"
   end
 end

@@ -1,11 +1,12 @@
 
 class GemPackage < Package
-  def self.define (pkg_name, version_spec=nil, &block)
-    super(pkg_name, &block).tap do |instance|
-      instance.version_spec(version_spec)
+  def self.define (gem_name, version, &block)
+    super("ruby-#{gem_name.gsub('_', '-')}", &block).tap do |instance|
+      instance.gem_name(gem_name)
+      instance.version_spec(version)
     end
   end
-  
+
   property :version_spec, nil
 
   property :url, nil
@@ -34,6 +35,10 @@ class GemPackage < Package
 
   property :gem_name do
     name.gsub(/^ruby-/, '')
+  end
+
+  def pkgname
+    "#{self.name}-#{self.version}"
   end
 
   def wdversion

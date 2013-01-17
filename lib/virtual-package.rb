@@ -1,4 +1,6 @@
 class VirtualPackage < Package
+  property :url, nil
+
   def do_fetch
     nil
   end
