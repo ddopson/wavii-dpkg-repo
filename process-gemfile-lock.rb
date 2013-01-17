@@ -31,7 +31,13 @@ V.each do |k, v|
   if d.size > 0
     str << " do\n"
     str << "  depends %w{\n"
-    str << "    #{d.map{|g| "wavii-ruby-#{g}"}.uniq.join("\n    ")}\n"
+    d.uniq.sort.each do |k|
+      if Exclude.include? k
+        str << "    #wavii-ruby-#{k}\n"
+      else
+        str << "    wavii-ruby-#{k}\n"
+      end
+    end
     str << "  }\n"
     str << "end"
   end
@@ -42,6 +48,8 @@ V.each do |k, v|
 end
 
 puts "VirtualPackage.define 'gemfile-??' do"
+puts "  description 'All ruby gems for ????'"
+puts "  #version '0.0.1'"
 puts "  depends %w{"
 V.each do |k, v|
   if Exclude.include? k
@@ -50,6 +58,6 @@ V.each do |k, v|
     puts "    wavii-ruby-#{k}-#{v}"
   end
 end
-puts "  }.reject{|p| p.match /^#/}"
+puts "  }"
 puts "end" 
 

@@ -46,7 +46,7 @@ GemPackage.define "redis-rails", "3.1.4" do
 end
 GemPackage.define "redis-store", "1.1.0" do
   depends %w{
-    wavii-ruby-redis
+    #wavii-ruby-redis
   }
 end
 #GemPackage.define "dynamic_form", "1.1.3"
@@ -80,7 +80,7 @@ GemPackage.define "jade-js-source", "0.28.0"
 GemPackage.define "omniauth-oauth", "1.0.1" do
   depends %w{
     wavii-ruby-oauth
-    wavii-ruby-omniauth
+    #wavii-ruby-omniauth
   }
 end
 #GemPackage.define "profiler", "0.0.1"
@@ -496,7 +496,7 @@ end
 GemPackage.define "newrelic-redis", "1.4.0" do
   depends %w{
     wavii-ruby-newrelic-rpm
-    wavii-ruby-redis
+    #wavii-ruby-redis
   }
 end
 GemPackage.define "newrelic_rpm", "3.5.3.25"
@@ -534,7 +534,7 @@ end
 GemPackage.define "omniauth-oauth2", "1.0.2" do
   depends %w{
     wavii-ruby-oauth2
-    wavii-ruby-omniauth
+    #wavii-ruby-omniauth
   }
 end
 GemPackage.define "omniauth-twitter", "0.0.9" do
@@ -613,7 +613,7 @@ end
 #GemPackage.define "redis", "2.2.2"
 GemPackage.define "redis-objects", "0.5.2" do
   depends %w{
-    wavii-ruby-redis
+    #wavii-ruby-redis
   }
 end
 GemPackage.define "responders", "0.6.4"

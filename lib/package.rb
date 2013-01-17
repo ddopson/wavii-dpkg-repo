@@ -98,7 +98,7 @@ class Package < PropertyBag
   end
 
   def do_deps
-    deps = Array(self.build_depends)
+    deps = Array(self.build_depends.reject_comments)
     if deps.length > 0
       self.announce "Ensuring that all the build dependencies are installed - {#{deps.join(', ')}}"
       self.cmd "sudo apt-get -y install #{deps.join(' ')}"
@@ -117,6 +117,12 @@ class Package < PropertyBag
     self.cmd "tar -xzf '#{self.tarfile}'"
   end
 
+  class Array
+    def reject_comments
+      self.reject{|p| p.match /^#/}
+    end
+  end
+
   def do_write_controlfile
     contents = <<-"CONTROL_FILE".strip_heredoc
       Package: #{PACKAGING_PREFIX}#{self.pkgname}
@@ -124,11 +130,11 @@ class Package < PropertyBag
       Section: web
       Architecture: #{arch}
       Maintainer: Dave Dopson <dave@wavii.com>
-      Depends: #{Array(self.depends).join(', ')}
+      Depends: #{Array(self.depends).reject_comments.join(', ')}
       Pre-Depends:
       Recommends:
-      Replaces: #{Array(self.replaces).join(', ')}
-      Provides: #{Array(self.provides).join(', ')}
+      Replaces: #{Array(self.replaces).reject_comments.join(', ')}
+      Provides: #{Array(self.provides).reject_comments.join(', ')}
     CONTROL_FILE
     contents << "Description: #{self.description.gsub(/\n/, "\n  ")}\n"
     self.announce "Writing Control File:"
