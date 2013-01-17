@@ -1,8 +1,6 @@
 class MakefilePackage < Package
-  self.declare_properties(
-    :configure_options => '',
-    :build_options => '-j8',
-  )
+  property :configure_options, ''
+  property :build_options, '-j8'
 
   def do_build
     self.do_build_configure

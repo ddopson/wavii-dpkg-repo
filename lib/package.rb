@@ -1,50 +1,27 @@
 #!/usr/bin/env ruby
 
-class Package
+class Package < PropertyBag
   include Rake::DSL
 
-  def self.define (pkg_name, &block)
-    c = Class.new(self, &block)
-    puts "Defining name on class"
-    c.send :define_method, :name, lambda { pkg_name }
-    Kernel.const_set pkg_name.to_s.camelize, c
-  end
+  ALL = []
 
-  def self.declare_properties(hash)
-    hash.each do |sym, default|
-      if default.is_a? Proc
-        self.send :define_method, sym, default
-      else
-        self.send :define_method, sym do
-          if default == :required
-            raise "'#{sym.to_s}' must be defined"
-          end
-          default
-        end
-      end
-
-      self.define_singleton_method(sym) do |str|
-        if str.is_a? Proc
-          self.send :define_method, sym, str
-        else
-          self.send :define_method, sym, lambda { str }
-        end
-      end
+  def self.define (pkg_name, version_spec=nil, &block)
+    super(pkg_name, &block).tap do |instance|
+      ALL << instance
     end
   end
 
-  self.declare_properties(
-    :description => :required,
-    :version => :required,
-    :url => :required,
-    :homepage => nil,
-    :depends => [],
-    :build_depends => [],
-    :arch => ARCH,
-    :install_prefix => '/usr/local',
-    :provides => lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] },
-    :replaces => lambda { [self.name] },
-  )
+  property :name,             required: true
+  property :description,      required: true
+  property :version,          required: true
+  property :url,              required: true
+  property :homepage, nil
+  property :depends, []
+  property :build_depends, []
+  property :arch, ARCH
+  property :install_prefix, '/usr/local'
+  property :provides, lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] }
+  property :replaces, lambda { [self.name] }
 
   def wdversion
     version # this is a hack so for packages w/o a specified version

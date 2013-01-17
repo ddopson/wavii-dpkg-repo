@@ -1,8 +1,7 @@
 
 def load_package(package_name)
   require "#{File.dirname(__FILE__)}/../packages/#{package_name}"
-  clazz = Kernel.const_get package_name.camelize
-  pkg = clazz.new
+  Package::ALL
 end
 
 
@@ -16,8 +15,9 @@ task :default => :help
 desc 'Download, Build, and Package one project'
 task :build, [:package_name] do |t, args|
   package_name = args[:package_name]
-  pkg = load_package(package_name)
-  pkg.do_all
+  load_package(package_name).each do |pkg|
+    pkg.do_all
+  end
 end
 
 task :update_metadata do |t, args|

@@ -14,6 +14,7 @@ Dir[File.expand_path('../tasks/**/*.rake', __FILE__)].each {|t| load t}
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
 require 'backcompat'
+require 'property-bag'
 require 'package'
 require 'makefile-package'
 require 'gem-package'
