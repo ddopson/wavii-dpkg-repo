@@ -1,3 +1,17 @@
+
+####################################################################################################
+# SPECIAL: This is an UNSTATED dependency of Chef
+GemPackage.define 'ruby-shadow', '2.1.2'
+GemPackage.define 'mysql', '2.9.0' do
+  depends %w{
+    libmysqlclient16
+    libc6
+  }
+end
+####################################################################################################
+####################################################################################################
+
+
 GemPackage.define "builder", "3.0.0"
 GemPackage.define "bunny", "0.7.8"
 GemPackage.define "chef", "0.10.2" do
@@ -110,6 +124,11 @@ VirtualPackage.define 'gemfile-chef' do
   description 'All ruby gems for Chef'
   version '0.0.1'
   depends %w{
+    #-UNSTATED-DEPENDENCIES
+    wavii-ruby-ruby-shadow-2.1.2
+    wavii-ruby-mysql-2.9.0
+
+    #-normal-dependencies
     wavii-ruby-builder-3.0.0
     wavii-ruby-bunny-0.7.8
     wavii-ruby-chef-0.10.2
