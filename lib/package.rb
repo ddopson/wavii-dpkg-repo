@@ -39,7 +39,7 @@ class Package < PropertyBag
     a = a.reject{|p| p.match /^#/}
 
     # Resolve Package objects to string names
-    a = a.map{|p| p.is_a? Package ? p.pkgname : p }
+    a = a.map{|p| p.is_a?(Package) ? p.pkgname : p }.join(', ')
   end
 
   property :controlfile_props do
@@ -111,6 +111,13 @@ class Package < PropertyBag
     self.do_package
     self.do_copy
   end
+  def no_clean
+    self.do_deps
+    self.do_fetch
+    self.do_build
+    self.do_package
+    self.do_copy
+  end
 
   def do_all
     unless File.exists?("#{self.working_dir}/SUCCESS") && !@force
@@ -151,7 +158,7 @@ class Package < PropertyBag
       contents << "#{k}: #{v}\n"
     end
 
-    self.announce "Writing Control File:"
+    self.announce "Writing Control File: #{self.install_root}/DEBIAN/control"
     puts contents.gsub(/^/, '>>')
     self.write_file "#{self.install_root}/DEBIAN/control", contents
   end
