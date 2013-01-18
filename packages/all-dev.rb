@@ -19,7 +19,7 @@ VirtualPackage.define 'all-dev' do
     libreadline6-dev
     libyaml-dev
     zlib1g-dev
-    
+
     #-ruby-nokogiri
     libxml2-dev
     libxslt-dev
