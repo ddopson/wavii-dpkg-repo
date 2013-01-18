@@ -1,4 +1,4 @@
-Package.define 's3cmd' do
+MakefilePackage.define 's3cmd' do
   arch 'all'
   homepage 'http://s3tools.org/s3cmd'
 
@@ -11,7 +11,7 @@ Package.define 's3cmd' do
 
   version '1.1.0-beta3-nohang'
   url lambda { "wavii-repo.s3.amazonaws.com/source/#{name}-#{version}.tar.gz" }
-  depends "python (>= 2.5) | python-elementtree, python, python-support (>= 0.7.1)"
+  depends "python (>= 2.5) | python-elementtree, python, python-support (>= 0.7.1), python-magic"
 
   def do_build
     # Basically, the strategy to package it is to allow it to write to /usr/local and the package up whatever gets written there
