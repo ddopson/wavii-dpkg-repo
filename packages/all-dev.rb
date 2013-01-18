@@ -45,6 +45,9 @@ VirtualPackage.define 'all-dev' do
     libsasl2-2
     libsasl2-dev
 
+    #-java
+    openjdk-6-jdk
+
     #-activity
     libevent-dev
     python-dev
