@@ -20,6 +20,7 @@ require 'package'
 require 'downloadable-package'
 require 'makefile-package'
 require 'gem-package'
+require 'npm-package'
 require 'virtual-package'
 
 puts "ARCH=#{ARCH}"
