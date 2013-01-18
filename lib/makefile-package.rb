@@ -1,4 +1,6 @@
 class MakefilePackage < Package
+  include DownloadablePackage
+
   property :configure_options, ''
   property :build_options, '-j8'
 

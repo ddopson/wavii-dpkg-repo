@@ -8,6 +8,7 @@ VirtualPackage.define 'all-dev' do
     build-essential
     wget
     libboost-all-dev
+    wavii-sparsehash
 
     #-ruby
     libc6-dev

@@ -1,30 +1,14 @@
 
 class GemPackage < Package
   def self.define (gem_name, version, &block)
-    super("ruby-#{gem_name.gsub('_', '-')}", &block).tap do |instance|
+    super("ruby-#{gem_name.gsub('_', '-')}") do |instance|
       instance.gem_name(gem_name)
-      instance.version_spec(version)
+      instance.version(version)
+      instance.instance_eval(&block) if block_given?
     end
   end
-
-  property :version_spec, nil
-
-  property :url, nil
-
-  property :version do
-    unless @_version
-      if version_spec
-        @_version = version_spec
-      else
-        result = `env GEM_PATH=#{gem_install_root} gem which #{gem_name}`
-        # eg /home/ubuntu/wavii-dpkg-repo/install-root/usr/local/lib/ruby/gems/1.9.1/gems/bundler-1.0.21/lib/bundler.rb
-        @_version = result.match(/gems\/#{gem_name}-([^\/]+)\//)[1]
-        unless @_version
-          return 'unknown'
-        end
-      end
-    end
-    @_version
+  property :version_spec do
+    self.version
   end
 
   property :depends, ["#{PACKAGING_PREFIX}ruby"]
@@ -37,12 +21,8 @@ class GemPackage < Package
     name.gsub(/^ruby-/, '')
   end
 
-  def pkgname
+  property :pkgname do
     "#{self.name}-#{self.version}"
-  end
-
-  def wdversion
-    version_spec || 'unknown'
   end
 
   def gem_install_root
@@ -50,10 +30,12 @@ class GemPackage < Package
   end
 
   def do_fetch
+    FileUtils.mkdir_p "#{self.install_root}2#{self.install_prefix}"
+
     self.announce "Installing '#{gem_name}' Gem into #{self.install_root}"
     cmd = "gem install"
     cmd << %Q{ --install-dir "#{self.gem_install_root}"}
-    cmd << %Q{ --bindir "#{self.install_root}#{self.install_prefix}/bin"}
+    cmd << %Q{ --bindir "#{self.install_root}2#{self.install_prefix}/bin"}
     cmd << %Q{ --ignore-dependencies }
     cmd << %Q{ #{self.gem_name}}
     if self.version_spec
@@ -63,7 +45,27 @@ class GemPackage < Package
   end
 
   def do_build
-    nil
+    if File.exists? "#{self.install_root}2#{self.install_prefix}/bin"
+      me = self
+      @binpkg = Package.define "#{me.name}-bin" do
+        description "The executable for ruby gem '#{me.name}'"
+        version '0.0.0'
+        depends me.name
+        provides me.name
+      end
+      @binpkg.do_clean
+      self.cmd "mkdir -p #{@binpkg.install_root}#{self.install_prefix}"
+      self.cmd "mv #{self.install_root}2#{self.install_prefix}/bin #{@binpkg.install_root}#{self.install_prefix}"
+    end
   end
 
+  def do_package
+    super
+    @binpkg.do_package if @binpkg
+  end
+
+  def do_copy
+    super
+    @binpkg.do_copy if @binpkg
+  end
 end

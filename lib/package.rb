@@ -1,4 +1,12 @@
 #!/usr/bin/env ruby
+  
+class Array
+  def reject_comments
+    self.reject{|p| p.match /^#/}
+  end
+end
+
+GLOBAL_OPTS = {}
 
 class Package < PropertyBag
   include Rake::DSL
@@ -11,57 +19,57 @@ class Package < PropertyBag
     end
   end
 
+  def initialize
+    super
+    @dry_run = GLOBAL_OPTS[:dry_run]
+  end
+
   property :name,             required: true
+  property :pkgname do
+    name
+  end
   property :description,      required: true
   property :version,          required: true
-  property :url,              required: true
   property :homepage, nil
   property :depends, []
+  property :recommends, []
   property :build_depends, []
   property :arch, ARCH
   property :install_prefix, '/usr/local'
   property :provides, lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] }
-  property :replaces, lambda { [self.name] }
+  property :replaces, []
 
-  def pkgname
-    name
+  property :controlfile_props do
+    {
+      Package:      "#{PACKAGING_PREFIX}#{self.pkgname}",
+      Version:      "#{self.version}",
+      Section:      "web",
+      Architecture: "#{arch}",
+      Maintainer:   "Dave Dopson <dave@wavii.com>",
+      Depends:      Array(self.depends).reject_comments.join(', '),
+      Recommends:   Array(self.recommends).reject_comments.join(', '),
+      Replaces:     Array(self.replaces).reject_comments.join(', '),
+      Provides:     Array(self.provides).reject_comments.join(', '),
+      Description:  self.description.gsub(/\n/, "\n  ")
+    }
   end
 
-  def wdversion
-    version # this is a hack so for packages w/o a specified version
-  end
-
-  def working_dir
+  property :working_dir do
     "#{BASE_DIRECTORY}/tmp/#{self.name}-#{self.version}"
   end
 
-  def source_dir
-    @source_dir ||= detect_source_dir
+  property :outputdir do
+    "#{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{self.arch}"
   end
 
-  def detect_source_dir
-    if @dry_run
-      return '#{source_dir}'
-    end
-    output = `tar -tzf #{self.tarfile} | cut -d/ -f1 | uniq`.split('\n')
-    if output.length > 1
-      raise "Error: tarfile #{self.tarfile} has #{output.length} top-level entries"
-    end
-    return "#{working_dir}/#{output[0]}".strip
+  property :debfile do
+    "#{self.working_dir}/#{PACKAGING_PREFIX}#{self.name}-#{self.version}-#{self.arch}.deb"
   end
 
-  def tarfile
-    "#{working_dir}/#{name}-#{version}.tar.gz"
-  end
-
-  def debfile
-    "#{self.working_dir}/#{PACKAGING_PREFIX}#{name}-#{version}-#{arch}.deb"
-  end
-
-  def install_root
+  property :install_root do
     "#{working_dir}/install-root"
   end
-
+        
   ####################################################################################################
   # Machinery - does work
   ####################################################################################################
@@ -78,8 +86,26 @@ class Package < PropertyBag
     end
   end
 
+  def write_file(file, contents)
+    unless @dry_run
+      FileUtils.mkdir_p(File.dirname(file))
+      File.write file, contents
+    end
+  end
+
+  def do_dry
+    @dry_run = true
+    self.do_all
+  end
+
+  def do_df
+    @dry_run = true
+    @force = true
+    self.do_all
+  end
+
   def do_all
-    unless File.exists?("#{self.working_dir}/SUCCESS")
+    unless File.exists?("#{self.working_dir}/SUCCESS") && !@force
       self.do_clean
       self.do_deps
       self.do_fetch
@@ -90,11 +116,13 @@ class Package < PropertyBag
   end
 
   def do_clean
-    if File.exists?(self.working_dir)
-      self.announce "Cleaning out old contents from #{self.working_dir}"
-      FileUtils.rm_rf(self.working_dir)
+    unless @dry_run
+      if File.exists?(self.working_dir)
+        self.announce "Cleaning out old contents from #{self.working_dir}"
+        FileUtils.rm_rf(self.working_dir)
+      end
+      FileUtils.mkdir_p(self.working_dir)
     end
-    FileUtils.mkdir_p(self.working_dir)
   end
 
   def do_deps
@@ -106,41 +134,18 @@ class Package < PropertyBag
   end
 
   def do_fetch
-    self.announce "Downloading #{name}-#{version} from '#{self.url}'"
-    self.cmd "pwd"
-    self.cmd "curl -s -D- -o '#{self.tarfile}'  '#{self.url}'"
-    self.do_unpack
-  end
-
-  def do_unpack
-    self.announce "Unpacking tarball '#{self.tarfile}'"
-    self.cmd "tar -xzf '#{self.tarfile}'"
-  end
-
-  class Array
-    def reject_comments
-      self.reject{|p| p.match /^#/}
-    end
+    raise 'must be defined'
   end
 
   def do_write_controlfile
-    contents = <<-"CONTROL_FILE".strip_heredoc
-      Package: #{PACKAGING_PREFIX}#{self.pkgname}
-      Version: #{self.version}
-      Section: web
-      Architecture: #{arch}
-      Maintainer: Dave Dopson <dave@wavii.com>
-      Depends: #{Array(self.depends).reject_comments.join(', ')}
-      Pre-Depends:
-      Recommends:
-      Replaces: #{Array(self.replaces).reject_comments.join(', ')}
-      Provides: #{Array(self.provides).reject_comments.join(', ')}
-    CONTROL_FILE
-    contents << "Description: #{self.description.gsub(/\n/, "\n  ")}\n"
+    contents = ""
+    controlfile_props.each do |k, v|
+      contents << "#{k}: #{v}\n"
+    end
+
     self.announce "Writing Control File:"
     puts contents.gsub(/^/, '>>')
-    FileUtils.mkdir_p "#{self.install_root}/DEBIAN"
-    File.write "#{self.install_root}/DEBIAN/control", contents
+    self.write_file "#{self.install_root}/DEBIAN/control", contents
   end
 
   def do_build
@@ -154,9 +159,9 @@ class Package < PropertyBag
   end
 
   def do_copy
-    self.cmd "mv '#{self.debfile}' '#{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{arch}/'"
+    self.cmd "mv '#{self.debfile}' '#{self.outputdir}/'"
     self.cmd "touch #{self.working_dir}/SUCCESS"
-    self.announce "SUCCESS! Final Output: #{BASE_DIRECTORY}/s3-repo/dists/#{DIST_PATH}/binary-#{arch}/#{File.basename(self.debfile)}"
+    self.announce "SUCCESS! Final Output: #{self.outputdir}/#{File.basename(self.debfile)}"
   end
 end
 

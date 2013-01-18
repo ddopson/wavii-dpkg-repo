@@ -743,24 +743,24 @@ GemPackage.define "xpath", "0.1.4" do
 end
 GemPackage.define "yajl-ruby", "1.1.0"
 VirtualPackage.define 'gemfile-website' do
-  description 'All ruby gems for the wavii front-end website'
-  version '0.0.1'
+  description 'All ruby gems for wavii\'s frontend website'
+  version '0.0.2'
   depends %w{
     #wavii-ruby-abingo-0.1.2
     #wavii-ruby-premailer-1.7.3
     wavii-ruby-activeadmin-0.3.1
-    #wavii-ruby-home_run-1.0.4
+    #wavii-ruby-home-run-1.0.4
     wavii-ruby-redis-actionpack-3.1.4
     wavii-ruby-redis-activesupport-3.1.4
     wavii-ruby-redis-rack-1.3.6
     wavii-ruby-redis-rails-3.1.4
     wavii-ruby-redis-store-1.1.0
-    #wavii-ruby-dynamic_form-1.1.3
-    #wavii-ruby-newrelic_api-1.2.3
+    #wavii-ruby-dynamic-form-1.1.3
+    #wavii-ruby-newrelic-api-1.2.3
     #wavii-ruby-twitter-2.1.0
-    #wavii-ruby-active_form-1.0.3
+    #wavii-ruby-active-form-1.0.3
     #wavii-ruby-thrift-0.9.0.1
-    #wavii-ruby-friendly_id-3.2.1.1
+    #wavii-ruby-friendly-id-3.2.1.1
     wavii-ruby-jade-js-source-0.28.0
     #wavii-ruby-jsonpath-0.4.2
     wavii-ruby-omniauth-oauth-1.0.1
@@ -771,7 +771,7 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-ZenTest-4.6.2
     wavii-ruby-actionmailer-3.1.5
     wavii-ruby-actionpack-3.1.5
-    wavii-ruby-active_reload-0.6.1
+    wavii-ruby-active-reload-0.6.1
     wavii-ruby-activemodel-3.1.5
     wavii-ruby-activerecord-3.1.5
     wavii-ruby-activerecord-import-0.2.9
@@ -781,7 +781,7 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-airbrake-3.1.6
     wavii-ruby-arel-2.2.3
     wavii-ruby-autotest-4.4.6
-    wavii-ruby-aws_cloud_search-0.0.1
+    wavii-ruby-aws-cloud-search-0.0.1
     wavii-ruby-babosa-0.3.5
     wavii-ruby-bcrypt-ruby-3.0.1
     wavii-ruby-builder-3.0.4
@@ -791,30 +791,30 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-chef-0.10.10
     wavii-ruby-childprocess-0.2.5
     wavii-ruby-chronic-0.6.7
-    wavii-ruby-chunky_png-1.2.5
+    wavii-ruby-chunky-png-1.2.5
     wavii-ruby-coffee-rails-3.1.0
     wavii-ruby-coffee-script-2.2.0
     wavii-ruby-coffee-script-source-1.1.2
     wavii-ruby-columnize-0.3.6
     wavii-ruby-compass-0.12.rc.1
     wavii-ruby-compass-rails-1.0.0.rc.2
-    wavii-ruby-connection_pool-0.9.2
-    wavii-ruby-css_parser-1.2.6
+    wavii-ruby-connection-pool-0.9.2
+    wavii-ruby-css-parser-1.2.6
     wavii-ruby-cucumber-1.1.4
     wavii-ruby-cucumber-rails-1.2.1
-    wavii-ruby-database_cleaner-0.6.7
+    wavii-ruby-database-cleaner-0.6.7
     wavii-ruby-debugger-1.1.1
     wavii-ruby-debugger-linecache-1.1.1
-    wavii-ruby-debugger-ruby_core_source-1.1.1
+    wavii-ruby-debugger-ruby-core-source-1.1.1
     wavii-ruby-devise-2.1.0.rc
     wavii-ruby-diff-lcs-1.1.3
-    wavii-ruby-email_spec-1.2.1
+    wavii-ruby-email-spec-1.2.1
     wavii-ruby-erubis-2.7.0
     wavii-ruby-escape-0.0.4
     wavii-ruby-excon-0.6.6
     wavii-ruby-execjs-1.4.0
     wavii-ruby-faraday-0.7.6
-    wavii-ruby-faraday_middleware-0.8.7
+    wavii-ruby-faraday-middleware-0.8.7
     wavii-ruby-fastercsv-1.5.4
     wavii-ruby-ffaker-1.8.1
     wavii-ruby-ffi-1.0.11
@@ -823,24 +823,24 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-formtastic-1.2.4
     wavii-ruby-fssm-0.2.8.1
     wavii-ruby-gherkin-2.7.2
-    wavii-ruby-girl_friday-0.10.0
+    wavii-ruby-girl-friday-0.10.0
     wavii-ruby-git-1.2.5
     wavii-ruby-grid-coordinates-1.1.5
     wavii-ruby-guard-1.0.1
     wavii-ruby-guard-bundler-0.1.3
     wavii-ruby-guard-rspec-0.7.0
     wavii-ruby-guard-spork-0.7.1
-    wavii-ruby-has_scope-0.5.1
+    wavii-ruby-has-scope-0.5.1
     wavii-ruby-hashie-1.2.0
     wavii-ruby-highline-1.6.14
     wavii-ruby-hike-1.2.1
     wavii-ruby-hipchat-0.4.1
-    wavii-ruby-hogan_assets-1.3.1
+    wavii-ruby-hogan-assets-1.3.1
     wavii-ruby-htmlentities-4.3.1
     wavii-ruby-httparty-0.8.1
     wavii-ruby-httpauth-0.2.0
     wavii-ruby-i18n-0.6.0
-    wavii-ruby-inherited_resources-1.2.2
+    wavii-ruby-inherited-resources-1.2.2
     wavii-ruby-inifile-0.4.1
     wavii-ruby-ipaddress-0.8.0
     wavii-ruby-json-1.6.1
@@ -853,9 +853,9 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-log4r-1.1.9
     wavii-ruby-machinist-1.0.6
     wavii-ruby-mail-2.3.3
-    wavii-ruby-mail_safe-0.3.1
+    wavii-ruby-mail-safe-0.3.1
     wavii-ruby-memcached-1.4.1
-    wavii-ruby-meta_search-1.1.1
+    wavii-ruby-meta-search-1.1.1
     wavii-ruby-mime-types-1.19
     wavii-ruby-mixlib-authentication-1.3.0
     wavii-ruby-mixlib-cli-1.2.2
@@ -863,10 +863,10 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-mixlib-log-1.4.1
     wavii-ruby-mixlib-shellout-1.0.0
     wavii-ruby-mixpanel-1.1.3
-    wavii-ruby-mixpanel_client-3.0.0
+    wavii-ruby-mixpanel-client-3.0.0
     wavii-ruby-moneta-0.6.0
-    wavii-ruby-multi_json-1.0.4
-    wavii-ruby-multi_xml-0.4.1
+    wavii-ruby-multi-json-1.0.4
+    wavii-ruby-multi-xml-0.4.1
     wavii-ruby-multipart-post-1.1.5
     wavii-ruby-mustache-0.99.4
     wavii-ruby-mysql2-0.3.11
@@ -874,7 +874,7 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-net-ssh-gateway-1.1.0
     wavii-ruby-net-ssh-multi-1.1
     wavii-ruby-newrelic-redis-1.4.0
-    wavii-ruby-newrelic_rpm-3.5.3.25
+    wavii-ruby-newrelic-rpm-3.5.3.25
     wavii-ruby-nokogiri-1.5.4
     wavii-ruby-nyan-cat-formatter-0.0.7
     wavii-ruby-oauth-0.4.6
@@ -884,9 +884,9 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-omniauth-facebook-1.4.0
     wavii-ruby-omniauth-oauth2-1.0.2
     wavii-ruby-omniauth-twitter-0.0.9
-    wavii-ruby-orm_adapter-0.0.7
+    wavii-ruby-orm-adapter-0.0.7
     wavii-ruby-parallel-0.5.16
-    wavii-ruby-parallel_tests-0.7.2
+    wavii-ruby-parallel-tests-0.7.2
     wavii-ruby-polyamorous-0.5.0
     wavii-ruby-polyglot-0.3.3
     wavii-ruby-rack-1.3.6
@@ -905,9 +905,9 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-responders-0.6.4
     wavii-ruby-rest-client-1.6.7
     wavii-ruby-retryable-1.2.5
-    wavii-ruby-right_aws-2.1.0
-    wavii-ruby-right_http_connection-1.3.0
-    wavii-ruby-rpm_contrib-2.1.11
+    wavii-ruby-right-aws-2.1.0
+    wavii-ruby-right-http-connection-1.3.0
+    wavii-ruby-rpm-contrib-2.1.11
     wavii-ruby-rspec-2.8.0
     wavii-ruby-rspec-core-2.8.0
     wavii-ruby-rspec-expectations-2.8.0
@@ -915,17 +915,17 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-rspec-rails-2.8.1
     wavii-ruby-ruby-hmac-0.4.0
     wavii-ruby-ruby-prof-0.10.8
-    wavii-ruby-ruby_gntp-0.3.4
+    wavii-ruby-ruby-gntp-0.3.4
     wavii-ruby-rubyzip-0.9.5
     wavii-ruby-sass-3.1.13
     wavii-ruby-sass-rails-3.1.5
     wavii-ruby-selenium-webdriver-2.16.0
-    wavii-ruby-simple_oauth-0.2.0
+    wavii-ruby-simple-oauth-0.2.0
     wavii-ruby-slim-1.0.2
     wavii-ruby-spork-0.9.0.rc9
     wavii-ruby-sprockets-2.0.4
     wavii-ruby-sqlite3-1.3.4
-    wavii-ruby-strip_attributes-1.0.3
+    wavii-ruby-strip-attributes-1.0.3
     wavii-ruby-systemu-2.5.2
     wavii-ruby-temple-0.3.4
     wavii-ruby-term-ansicolor-1.0.7
@@ -940,5 +940,5 @@ VirtualPackage.define 'gemfile-website' do
     wavii-ruby-warden-1.1.1
     wavii-ruby-xpath-0.1.4
     wavii-ruby-yajl-ruby-1.1.0
-  }.reject{|p| p.match /^#/}
+  }
 end

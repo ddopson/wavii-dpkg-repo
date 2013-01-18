@@ -3,9 +3,7 @@ class PropertyBag
   def self.define(name, &block)
     self.new.tap do |instance|
       instance.name(name)
-      if block_given?
-        instance.instance_eval(&block)
-      end
+      instance.instance_eval(&block) if block_given?
       instance.validate!
     end
   end

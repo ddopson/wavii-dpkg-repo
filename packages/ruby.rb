@@ -3,7 +3,7 @@ MakefilePackage.define 'ruby' do
 
   version '1.9.3-p362'
 
-  def url
+  url do
     "http://ftp.ruby-lang.org/pub/ruby/1.9/#{self.name}-#{self.version}.tar.gz"
   end
 
@@ -18,6 +18,28 @@ MakefilePackage.define 'ruby' do
     libyaml-dev
     zlib1g-dev
   }
-  provides ['ruby', 'ruby-dev', 'libruby', 'rake', 'irb', 'ruby-interpreter', 'rdoc']
-  replaces ['ruby', 'ruby1.8', 'libruby1.8']
+  provides [
+    'ruby', 'ruby1.9', 'wavii-ruby', 'wavii-ruby1.9',
+    'ruby-dev', 'ruby-dev1.9',
+    'libruby', 'libruby1.9',
+    'libruby-dev', 'libruby-dev1.9',
+    'rdoc', 'ruby-rdoc', 'wavii-ruby-rdoc', 'wavii-ruby-rdoc-3.9.4',
+    'rake', 'ruby-rake', 'wavii-ruby-rake', 'wavii-ruby-rake-0.9.2',
+    'ruby-minitest', 'wavii-ruby-minitest', 'wavii-ruby-minitest-2.5.1',
+    'ruby-io-console', 'wavii-ruby-io-console', 'wavii-ruby-io-console-0.3',
+    'ruby-bigdecimal', 'wavii-ruby-bigdecimal', 'wavii-ruby-bigdecimal-1.1.0',
+    'ruby-json', 'wavii-ruby-json', 'wavii-ruby-json-1.5.4',
+  ]
+  replaces [
+    'ruby', 'ruby1.9', 'wavii-ruby', 'wavii-ruby1.9',
+    'ruby-dev', 'ruby-dev1.9',
+    'libruby', 'libruby1.9',
+    'libruby-dev', 'libruby-dev1.9',
+    'rdoc', 'ruby-rdoc', 'wavii-ruby-rdoc', 'wavii-ruby-rdoc-3.9.4',
+    'rake', 'ruby-rake', 'wavii-ruby-rake', 'wavii-ruby-rake-0.9.2',
+    'ruby-minitest', 'wavii-ruby-minitest', 'wavii-ruby-minitest-2.5.1',
+    'ruby-io-console', 'wavii-ruby-io-console', 'wavii-ruby-io-console-0.3',
+    'ruby-bigdecimal', 'wavii-ruby-bigdecimal', 'wavii-ruby-bigdecimal-1.1.0',
+    'ruby-json', 'wavii-ruby-json', 'wavii-ruby-json-1.5.4',
+  ]
 end

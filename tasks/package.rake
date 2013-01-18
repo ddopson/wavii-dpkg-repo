@@ -1,6 +1,8 @@
 
-def load_package(package_name)
-  require "#{File.dirname(__FILE__)}/../packages/#{package_name}"
+def load_package(what)
+  file = File.absolute_path("#{File.dirname(__FILE__)}/../packages/#{what}")
+  puts "Loading package definitions from '#{file}'"
+  require file
   Package::ALL
 end
 
@@ -13,10 +15,17 @@ end
 task :default => :help
 
 desc 'Download, Build, and Package one project'
-task :build, [:package_name] do |t, args|
-  package_name = args[:package_name]
-  load_package(package_name).each do |pkg|
-    pkg.do_all
+task :build, [:opts] do |t, args|
+  method = :do_all
+  ARGV[0].match /^build\[(.*)\]$/ or raise "wtf"
+  opts = $1.split(',')
+  puts "opts=#{opts}"
+  opts.each do |file|
+    if file.match /^:(.*)/
+      method = $1.to_sym
+    else
+      load_package(file).each(&method)
+    end
   end
 end
 
@@ -62,3 +71,10 @@ task :irb do
   ARGV.clear
   IRB.start
 end
+
+task :hello, [:foo] do |t, args|
+  name = ARGV.join(', ')
+  puts "Hello, #{name}. args=#{args}"
+  task name.to_sym do ; end
+end
+
