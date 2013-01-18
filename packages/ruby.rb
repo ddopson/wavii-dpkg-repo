@@ -23,8 +23,8 @@ MakefilePackage.define 'ruby' do
     'ruby-dev', 'ruby-dev1.9',
     'libruby', 'libruby1.9',
     'libruby-dev', 'libruby-dev1.9',
-    'rdoc', 'ruby-rdoc', 'wavii-ruby-rdoc', 'wavii-ruby-rdoc-3.9.4',
-    'rake', 'ruby-rake', 'wavii-ruby-rake', 'wavii-ruby-rake-0.9.2', 'wavii-ruby-rake-0.9.2.2',
+    'rdoc', 'ruby-rdoc', 'wavii-ruby-rdoc', 'wavii-ruby-rdoc-3.9.4', 'wavii-ruby-rdoc-bin',
+    'rake', 'ruby-rake', 'wavii-ruby-rake', 'wavii-ruby-rake-0.9.2', 'wavii-ruby-rake-0.9.2.2', 'wavii-ruby-rake-bin',
     'ruby-minitest', 'wavii-ruby-minitest', 'wavii-ruby-minitest-2.5.1',
     'ruby-io-console', 'wavii-ruby-io-console', 'wavii-ruby-io-console-0.3',
     'ruby-bigdecimal', 'wavii-ruby-bigdecimal', 'wavii-ruby-bigdecimal-1.1.0',
@@ -43,3 +43,4 @@ MakefilePackage.define 'ruby' do
     'ruby-json', 'wavii-ruby-json', 'wavii-ruby-json-1.5.4',
   ]
 end
+
