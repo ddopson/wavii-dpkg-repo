@@ -4,7 +4,7 @@ class Foo
     c.send :define_method, :name, lambda { pkg_name }
     Kernel.const_set pkg_name.to_s, c
   end
-  
+
   def self.declare_properties(hash)
     hash.each do |sym, default|
       self.send :define_method, sym do
@@ -24,7 +24,7 @@ class Foo
       end
     end
   end
- 
+
   self.declare_properties(
     :foo => 9,
     :bar => :required,
@@ -36,7 +36,7 @@ Foo.define 'Monkey' do
   bar lambda { 99 }
 end
 
-m = Foo::Monkey.new 
+m = Foo::Monkey.new
 puts m.bar
 puts m.foo
 puts m.name
