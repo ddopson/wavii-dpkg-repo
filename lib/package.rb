@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-  
+
 class Array
   def reject_comments
     self.reject{|p| p.match /^#/}
@@ -69,7 +69,7 @@ class Package < PropertyBag
   property :install_root do
     "#{working_dir}/install-root"
   end
-        
+
   ####################################################################################################
   # Machinery - does work
   ####################################################################################################
@@ -102,6 +102,11 @@ class Package < PropertyBag
     @dry_run = true
     @force = true
     self.do_all
+  end
+
+  def package
+    self.do_package
+    self.do_copy
   end
 
   def do_all

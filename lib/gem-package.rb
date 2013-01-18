@@ -30,6 +30,9 @@ class GemPackage < Package
   end
 
   def do_fetch
+  end
+
+  def do_build
     FileUtils.mkdir_p "#{self.install_root}2#{self.install_prefix}"
 
     self.announce "Installing '#{gem_name}' Gem into #{self.install_root}"
@@ -44,23 +47,22 @@ class GemPackage < Package
     self.cmd cmd
   end
 
-  def do_build
+  def do_package
     if File.exists? "#{self.install_root}2#{self.install_prefix}/bin"
       me = self
       @binpkg = Package.define "#{me.name}-bin" do
         description "The executable for ruby gem '#{me.name}'"
         version '0.0.0'
-        depends me.name
-        provides me.name
+        depends "#{PACKAGING_PREFIX}#{me.name}"
       end
       @binpkg.do_clean
-      self.cmd "mkdir -p #{@binpkg.install_root}#{self.install_prefix}"
-      self.cmd "mv #{self.install_root}2#{self.install_prefix}/bin #{@binpkg.install_root}#{self.install_prefix}"
+      self.cmd "mkdir -p #{@binpkg.install_root}#{self.install_prefix}/bin"
+      self.cmd "cp #{self.install_root}2#{self.install_prefix}/bin/* #{@binpkg.install_root}#{self.install_prefix}/bin/"
+      self.depends << "#{PACKAGING_PREFIX}#{me.name}-bin"
     end
-  end
 
-  def do_package
     super
+
     @binpkg.do_package if @binpkg
   end
 
