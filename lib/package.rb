@@ -6,8 +6,6 @@ class Array
   end
 end
 
-GLOBAL_OPTS = {}
-
 class Package < PropertyBag
   include Rake::DSL
 
@@ -17,11 +15,6 @@ class Package < PropertyBag
     super(pkg_name, &block).tap do |instance|
       ALL << instance
     end
-  end
-
-  def initialize
-    super
-    @dry_run = GLOBAL_OPTS[:dry_run]
   end
 
   property :name,             required: true
@@ -39,6 +32,16 @@ class Package < PropertyBag
   property :provides, lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] }
   property :replaces, []
 
+  def package_list(list)
+    a = Array(list)
+
+    # Reject 'comment' strings that start with a '#' (make sure not to use spaces in a comment!)
+    a = a.reject{|p| p.match /^#/}
+
+    # Resolve Package objects to string names
+    a = a.map{|p| p.is_a? Package ? p.pkgname : p }
+  end
+
   property :controlfile_props do
     {
       Package:      "#{PACKAGING_PREFIX}#{self.pkgname}",
@@ -46,10 +49,10 @@ class Package < PropertyBag
       Section:      "web",
       Architecture: "#{arch}",
       Maintainer:   "Dave Dopson <dave@wavii.com>",
-      Depends:      Array(self.depends).reject_comments.join(', '),
-      Recommends:   Array(self.recommends).reject_comments.join(', '),
-      Replaces:     Array(self.replaces).reject_comments.join(', '),
-      Provides:     Array(self.provides).reject_comments.join(', '),
+      Depends:      package_list(self.depends),
+      Recommends:   package_list(self.recommends),
+      Replaces:     package_list(self.replaces),
+      Provides:     package_list(self.provides),
       Description:  self.description.gsub(/\n/, "\n  ")
     }
   end
