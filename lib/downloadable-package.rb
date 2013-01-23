@@ -3,7 +3,7 @@ module DownloadablePackage
     base.extend DownloadablePackage
     base.property :url,   required: true
     base.property :tarfile do
-      "#{working_dir}/#{name}-#{version}.tar.gz"
+      "#{working_dir}/#{File.basename(self.url)}"
     end
   end
 
@@ -15,12 +15,20 @@ module DownloadablePackage
   def do_download
     self.announce "Downloading #{name}-#{version} from '#{self.url}'"
     self.cmd "pwd"
-    self.cmd "curl -s -D- -o '#{self.tarfile}'  '#{self.url}'"
+    self.download(self.url, self.tarfile)
+  end
+
+  def tar_z_or_j
+    if self.tarfile.match /.bz2/
+      'j'
+    else
+      'z'
+    end
   end
 
   def do_unpack
     self.announce "Unpacking tarball '#{self.tarfile}'"
-    self.cmd "tar -xzf '#{self.tarfile}'"
+    self.cmd "tar -x#{self.tar_z_or_j}f '#{self.tarfile}'"
   end
 
   def source_dir
@@ -31,7 +39,7 @@ module DownloadablePackage
     if @dry_run
       return '#{source_dir}'
     end
-    output = `tar -tzf #{self.tarfile} | cut -d/ -f1 | uniq`.split('\n')
+    output = `tar -t#{self.tar_z_or_j}f #{self.tarfile} | cut -d/ -f1 | uniq`.split('\n')
     if output.length > 1
       raise "Error: tarfile #{self.tarfile} has #{output.length} top-level entries"
     end
