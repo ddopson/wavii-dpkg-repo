@@ -7,6 +7,8 @@ VirtualPackage.define 'all-dev' do
     #-general
     build-essential
     wget
+    unzip zip
+    curl
     libboost-all-dev
     wavii-sparsehash
 
