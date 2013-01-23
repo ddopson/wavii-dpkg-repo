@@ -89,6 +89,33 @@ class Package < PropertyBag
     end
   end
 
+  def mkdir(dir)
+    unless @dry_run
+      FileUtils.mkdir_p(dir)
+    end
+  end
+
+  def use_system_path(path)
+    path = path.gsub(/\/+$/, '')
+    self.announce "TAKING OWNERSHIP OF SYSTEM PATH: '#{path}'"
+    need_bak = File.exists? path
+    self.cmd "sudo mv '#{path}' '#{path.bak}'" if need_bak
+    begin
+      raise "Path shouldn't exist now" if File.exists?(path)
+      yield
+    ensure
+      self.cmd "if [ -e '#{path}' ]; then sudo mv '#{path}' '#{path}.delete#{Time.now.to_i}'; fi"
+      self.cmd "sudo mv '#{path.bak}' '#{path}'" if need_bak
+    end
+  end
+
+  def download(url, dest=nil)
+    dest ||= "#{self.working_dir}/#{File.basename(url)}"
+    unless @dry_run
+      cmd "curl -s -D- -o '#{dest}'  '#{url}'"
+    end
+  end
+
   def write_file(file, contents)
     unless @dry_run
       FileUtils.mkdir_p(File.dirname(file))
