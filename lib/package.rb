@@ -19,7 +19,7 @@ class Package < PropertyBag
 
   property :name,             required: true
   property :pkgname do
-    name
+    "#{PACKAGING_PREFIX}#{self.name}"
   end
   property :description,      required: true
   property :version,          required: true
@@ -29,7 +29,7 @@ class Package < PropertyBag
   property :build_depends, []
   property :arch, ARCH
   property :install_prefix, '/usr/local'
-  property :provides, lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}"] }
+  property :provides, lambda { [self.name, "#{self.pkgname}"] }
   property :replaces, []
 
   def package_list(list)
@@ -44,7 +44,7 @@ class Package < PropertyBag
 
   property :controlfile_props do
     {
-      Package:      "#{PACKAGING_PREFIX}#{self.pkgname}",
+      Package:      "#{self.pkgname}",
       Version:      "#{self.version}",
       Section:      "web",
       Architecture: "#{arch}",
