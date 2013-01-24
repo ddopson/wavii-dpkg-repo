@@ -3,6 +3,7 @@ class MakefilePackage < Package
 
   property :configure_options, ''
   property :build_options, '-j8'
+  property :install_options, ''
 
   def do_build
     self.do_build_configure
@@ -22,6 +23,6 @@ class MakefilePackage < Package
 
   def do_build_install
     self.announce "Installing #{name}-#{version} into #{self.install_root}"
-    self.cmd "make install DESTDIR='#{self.install_root}'", self.source_dir
+    self.cmd "make install #{self.install_options} DESTDIR='#{self.install_root}'", self.source_dir
   end
 end

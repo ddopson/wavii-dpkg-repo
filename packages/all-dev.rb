@@ -12,6 +12,15 @@ VirtualPackage.define 'all-dev' do
     libboost-all-dev
     wavii-sparsehash
 
+    #-git
+    libcurl4-gnutls-dev
+    libexpat1-dev
+    gettext
+    libz-dev
+    libssl-dev
+    asciidoc
+    docbook2x
+
     #-ruby
     libc6-dev
     libssl-dev
