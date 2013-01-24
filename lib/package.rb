@@ -29,7 +29,7 @@ class Package < PropertyBag
   property :build_depends, []
   property :arch, ARCH
   property :install_prefix, '/usr/local'
-  property :provides, lambda { [self.name, "#{self.pkgname}"] }
+  property :provides, lambda { [self.name, "#{PACKAGING_PREFIX}#{self.name}", "#{self.pkgname}"] }
   property :replaces, []
 
   def package_list(list)
@@ -39,7 +39,7 @@ class Package < PropertyBag
     a = a.reject{|p| p.match /^#/}
 
     # Resolve Package objects to string names
-    a = a.map{|p| p.is_a?(Package) ? p.pkgname : p }.join(', ')
+    a = a.map{|p| p.is_a?(Package) ? p.pkgname : p }.uniq.join(', ')
   end
 
   property :controlfile_props do
