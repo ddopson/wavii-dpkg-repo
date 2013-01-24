@@ -22,7 +22,7 @@ class GemPackage < Package
   end
 
   property :pkgname do
-    "#{self.name}-#{self.version}"
+    "#{PACKAGING_PREFIX}#{self.name}-#{self.version}"
   end
 
   def gem_install_root
@@ -57,7 +57,9 @@ class GemPackage < Package
       end
       @binpkg.do_clean
       self.cmd "mkdir -p #{@binpkg.install_root}#{self.install_prefix}/bin"
+      self.cmd "mkdir -p #{@binpkg.install_root}#{self.install_prefix}/lib/ruby/gems/1.9.1/bin"
       self.cmd "cp #{self.install_root}2#{self.install_prefix}/bin/* #{@binpkg.install_root}#{self.install_prefix}/bin/"
+      self.cmd "cp #{self.install_root}2#{self.install_prefix}/bin/* #{@binpkg.install_root}#{self.install_prefix}/lib/ruby/gems/1.9.1/bin/"
       self.depends << "#{PACKAGING_PREFIX}#{me.name}-bin"
     end
 
