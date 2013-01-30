@@ -19,7 +19,7 @@ module DownloadablePackage
   end
 
   def tar_z_or_j
-    if self.tarfile.match /.bz2/
+    if self.tarfile.match /[.]bz2$/
       'j'
     else
       'z'
@@ -28,7 +28,11 @@ module DownloadablePackage
 
   def do_unpack
     self.announce "Unpacking tarball '#{self.tarfile}'"
-    self.cmd "tar -x#{self.tar_z_or_j}f '#{self.tarfile}'"
+    if self.tarfile.match /[.]zip$/
+      self.cmd "unzip '#{self.tarfile}'"
+    else
+      self.cmd "tar -x#{self.tar_z_or_j}f '#{self.tarfile}'"
+    end
   end
 
   def source_dir
@@ -39,7 +43,12 @@ module DownloadablePackage
     if @dry_run
       return '#{source_dir}'
     end
-    output = `tar -t#{self.tar_z_or_j}f #{self.tarfile} | cut -d/ -f1 | uniq`.split('\n')
+    if self.tarfile.match /[.]zip$/
+      output = `unzip -t #{self.tarfile} | perl -ne 's/^\s*testing: // and print' | cut -d/ -f1 | uniq`.split('\n')
+      puts "OUTPUT='#{output}'"
+    else
+      output = `tar -t#{self.tar_z_or_j}f #{self.tarfile} | cut -d/ -f1 | uniq`.split('\n')
+    end
     if output.length > 1
       raise "Error: tarfile #{self.tarfile} has #{output.length} top-level entries"
     end

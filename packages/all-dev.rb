@@ -12,6 +12,10 @@ VirtualPackage.define 'all-dev' do
     libboost-all-dev
     wavii-sparsehash
 
+    #-phantom
+    libfontconfig1 libfontconfig1-dev
+    libfreetype6 libfreetype6-dev
+
     #-git
     libcurl4-gnutls-dev
     libexpat1-dev
@@ -39,7 +43,7 @@ VirtualPackage.define 'all-dev' do
     libmysqlclient-dev
     bison
     openssl
-    libreadline-dev
+    libreadline6 libreadline6-dev
     curl
     git-core
     zlib1g
