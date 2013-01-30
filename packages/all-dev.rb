@@ -1,6 +1,6 @@
 
 VirtualPackage.define 'all-dev' do
-  version '0.0.4'
+  version '0.0.5'
   description 'Virtual Package for all dev packages needed for compilation'
 
   depends %w{
