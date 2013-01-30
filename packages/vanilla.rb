@@ -1,12 +1,13 @@
 
 VirtualPackage.define 'vanilla' do
-  version '0.0.2'
+  version '0.0.3'
   description 'Virtual Package for all packages to put in the burned \'vanilla\' AMI'
 
   depends %w{
     postfix
     sysstat
     ack-grep
+    mysql-client
     wavii-git
     wavii-s3cmd
     wavii-nodejs
