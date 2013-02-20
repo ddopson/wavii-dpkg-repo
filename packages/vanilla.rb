@@ -1,6 +1,6 @@
 
 VirtualPackage.define 'vanilla' do
-  version '0.0.4'
+  version '0.0.6'
   description 'Virtual Package for all packages to put in the burned \'vanilla\' AMI'
 
   depends %w{
@@ -9,6 +9,7 @@ VirtualPackage.define 'vanilla' do
     ack-grep
     wavii-gnu-parallel
     mysql-client
+    nginx
     wavii-git
     wavii-s3cmd
     wavii-nodejs
@@ -17,6 +18,8 @@ VirtualPackage.define 'vanilla' do
     wavii-gemfile-website
     wavii-ec2-ami-tools
     wavii-ec2-api-tools
-    wavii-python-distribute wavii-python-pip wavii-python-boto
+    python-pip
+    python-boto
+    python-virtualenv
   }.reject{|d| d.match /^#/}.uniq
 end
