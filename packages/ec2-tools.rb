@@ -24,6 +24,7 @@ MakefilePackage.define 'ec2-api-tools' do
   description "The API tools serve as the client interface to the Amazon EC2 web service."
 
   version '1.6.6.1'
+  package_version '2'
   url lambda { "wavii-repo.s3.amazonaws.com/source/#{name}-#{version}.tar.gz" }
 
   def do_build
@@ -34,5 +35,9 @@ MakefilePackage.define 'ec2-api-tools' do
     self.mkdir "#{self.install_root}/usr/local/bin"
     self.cmd "cp #{self.source_dir}/bin/ec2-* #{self.install_root}/usr/local/bin"
     self.cmd "mv #{self.source_dir}/* #{self.install_root}/usr/local/lib/ec2-api-tools/"
+
+    # Add the ec2-metadata-tool
+    self.cmd "wget http://s3.amazonaws.com/ec2metadata/ec2-metadata", "#{self.install_root}/usr/local/bin"
+    self.cmd "chmod +x #{self.install_root}/usr/local/bin/ec2-metadata"
   end
 end

@@ -23,6 +23,7 @@ class Package < PropertyBag
   end
   property :description,      required: true
   property :version,          required: true
+  property :package_version, nil
   property :homepage, nil
   property :depends, []
   property :recommends, []
@@ -45,7 +46,7 @@ class Package < PropertyBag
   property :controlfile_props do
     {
       Package:      "#{self.pkgname}",
-      Version:      "#{self.version}",
+      Version:      "#{self.version}#{self.package_version ? "-#{self.package_version}" : ""}",
       Section:      "web",
       Architecture: "#{arch}",
       Maintainer:   "Dave Dopson <dave@wavii.com>",
