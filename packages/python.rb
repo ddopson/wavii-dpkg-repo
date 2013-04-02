@@ -125,7 +125,34 @@ class PyEasyPackage < PyPackage
   end
 end
 
-PyEasyPackage.define 'python-pip'
-PyEasyPackage.define 'python-boto'
+class PyPipPackage < PyPackage
+  def self.define (pkg_name, &block)
+    super(pkg_name) do |instance|
+      instance.depends %{python}
+      instance.description { "The python '#{self.py_pkg}' module" }
+      instance.version  do
+        @_cached_version ||= (
+          val = `curl -s 'http://pypi.python.org/pypi?name=#{self.py_pkg}&:action=doap'`.gsub(/.*<Version><revision>(.*)<\/revision>.*/m){ $1}.strip
+          raise "Version not found in '#{val}'" unless val.match /\d+\.\d+/
+          puts "VERSION='#{val}'"
+          val
+        )
+      end
+      instance.instance_eval(&block) if block_given?
+    end
+  end
 
+  def py_pkg
+    self.name.gsub(/^python-/, '')
+  end
+  
+  def do_build_local
+      self.cmd "easy_install --always-copy --user #{self.py_pkg}"
+      self.cmd "rm -f ~/.local/lib/python2.7/site-packages/easy-install.pth"
+  end
+end
+
+PyEasyPackage.define 'python-pip'
+PyPipPackage.define 'python-boto'
+PyPipPackage.define 'python-virtualenv'
 
